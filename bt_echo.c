@@ -8,20 +8,20 @@ struct regmenu_ menu_screen = { 55, 1, 0, 0, keypress_handler, 0, 0, show_screen
 struct appdata_t** p_app_data;
 struct appdata_t* app_data;
 
-// определение функций из прошивки
+// РѕРїСЂРµРґРµР»РµРЅРёРµ С„СѓРЅРєС†РёР№ РёР· РїСЂРѕС€РёРІРєРё
 
 pf_alipay_task_create alipay_task_create = (pf_alipay_task_create) ALIPAY_TASK_CREATE_ADDR;
 pf_alipay_task_delete alipay_task_delete = (pf_alipay_task_delete) ALIPAY_TASK_DELETE_ADDR;
 pf_alipay_set_msg_handler alipay_set_msg_handler = (pf_alipay_set_msg_handler) ALIPAY_SET_MSG_HANDLER_ADDR;
 pf_alipay_send_host_data alipay_send_host_data = (pf_alipay_send_host_data) ALIPAY_SEND_HOST_DATA_ADDR;
 
-// точка входа
+// С‚РѕС‡РєР° РІС…РѕРґР°
 int main(int p, char** a) 
 { 
     show_screen_handler((void*) p);
 }
 
-// инициализация приложения
+// РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСЂРёР»РѕР¶РµРЅРёСЏ
 void startup_stub(void *p)
 {
     p_app_data = get_ptr_temp_buf_2();
@@ -50,8 +50,8 @@ void startup_stub(void *p)
 
 void show_screen_handler(void *p) 
 {
-    // мутота при активации приложения
-    // вынесена в отдельную функцию
+    // РјСѓС‚РѕС‚Р° РїСЂРё Р°РєС‚РёРІР°С†РёРё РїСЂРёР»РѕР¶РµРЅРёСЏ
+    // РІС‹РЅРµСЃРµРЅР° РІ РѕС‚РґРµР»СЊРЅСѓСЋ С„СѓРЅРєС†РёСЋ
     startup_stub(p);
 
     set_bg_color(COLOR_BLACK);
@@ -63,41 +63,41 @@ void show_screen_handler(void *p)
     set_display_state_value(4, 1);
     set_display_state_value(2, 1);
 
-    // активация эха
+    // Р°РєС‚РёРІР°С†РёСЏ СЌС…Р°
     echo_init();
 }
 
-// обработчик боковой кнопки: 
-// выходим из приложения
+// РѕР±СЂР°Р±РѕС‚С‡РёРє Р±РѕРєРѕРІРѕР№ РєРЅРѕРїРєРё: 
+// РІС‹С…РѕРґРёРј РёР· РїСЂРёР»РѕР¶РµРЅРёСЏ
 void keypress_handler()
 {
-    // деактивация эха
+    // РґРµР°РєС‚РёРІР°С†РёСЏ СЌС…Р°
     echo_deinit();
     show_menu_animate(app_data->ret_f, (unsigned int)show_screen_handler, ANIMATE_RIGHT);   
 };
 
-// активация
+// Р°РєС‚РёРІР°С†РёСЏ
 void echo_init()
 {
-    // запускаем задачу обработки очереди сообщений alipay
+    // Р·Р°РїСѓСЃРєР°РµРј Р·Р°РґР°С‡Сѓ РѕР±СЂР°Р±РѕС‚РєРё РѕС‡РµСЂРµРґРё СЃРѕРѕР±С‰РµРЅРёР№ alipay
     alipay_task_create();
-    // устанавливаем свой обработчик сообщений
+    // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃРІРѕР№ РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕРѕР±С‰РµРЅРёР№
     alipay_set_msg_handler(custom_msg_handler);
 }
 
-// деактивация
+// РґРµР°РєС‚РёРІР°С†РёСЏ
 void echo_deinit()
 {
-    // сбрасываем обработчик сообщений
+    // СЃР±СЂР°СЃС‹РІР°РµРј РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕРѕР±С‰РµРЅРёР№
     alipay_set_msg_handler(NULL);
-    // гасим задачу
+    // РіР°СЃРёРј Р·Р°РґР°С‡Сѓ
     alipay_task_delete();
 }
 
-// обработчик сообщений полученных от хоста
+// РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕРѕР±С‰РµРЅРёР№ РїРѕР»СѓС‡РµРЅРЅС‹С… РѕС‚ С…РѕСЃС‚Р°
 void custom_msg_handler(byte *data, int len)
 {
-    // посылаем хосту, то что получили от него
+    // РїРѕСЃС‹Р»Р°РµРј С…РѕСЃС‚Сѓ, С‚Рѕ С‡С‚Рѕ РїРѕР»СѓС‡РёР»Рё РѕС‚ РЅРµРіРѕ
     alipay_send_host_data(data, len);
 }
 
